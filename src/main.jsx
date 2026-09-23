@@ -5,6 +5,14 @@ const clubs=[["Aberdeen","Scotland",64,800],["Hearts","Scotland",65,900],["Hiber
 const people=[["Emma","Partner"],["Ryan","Best friend"],["Mum","Family"],["Coach","Mentor"]];
 const items=[["Mercurial Boots","👟",1200,"skill",3],["New Phone","📱",900,"morale",4],["Gaming PC","🖥️",1800,"morale",7],["Designer Watch","⌚",6500,"rep",3],["Sports Car","🏎️",45000,"rep",8],["Holiday","✈️",5000,"morale",18],["Gym Membership","🏋️",800,"skill",4],["Designer Clothes","🧥",2200,"rep",5],["PS5","🎮",500,"morale",3]];
 const initial={name:"McIntee",age:16,club:"Aberdeen",position:"ST",foot:"Right",ovr:64,skill:48,fitness:82,morale:75,rep:18,apps:0,goals:0,assists:0,value:120000,money:4200,weekly:0,day:1,season:1,relationship:35,items:[],history:[]};
+const positions=["ST","LW","RW","CAM","CM","CDM","LB","RB","CB","GK"];
+const nationalities=["Scottish","English","Irish","Welsh","French","Spanish","German","Italian","Dutch","Portuguese"];
+const backgrounds=[
+["Academy standout","You were one of the most exciting players in the academy. Coaches expect you to make an impact early.",2,5],
+["Late bloomer","You were overlooked for years, but a brilliant final academy season earned you a professional chance.",1,8],
+["Local prospect","You grew up supporting the club and worked your way through the local youth setup.",1,4],
+["International youth","You have already represented your country at youth level and arrive with a little extra attention.",3,6]
+];
 const clamp=(n,a=0,b=100)=>Math.max(a,Math.min(b,n)); const cash=n=>"£"+Math.round(n).toLocaleString("en-GB");
 function load(){try{const r=localStorage.getItem("footballCareer");return r?{...initial,...JSON.parse(r)}:{...initial}}catch{return{...initial}}}
 const Bar=({label,value})=><div className="barrow"><span>{label}</span><div className="bar"><i style={{width:clamp(value)+"%"}}/></div><b>{Math.round(value)}</b></div>;
@@ -17,7 +25,7 @@ function transfer(i){const c=clubs[i];if(s.ovr+8<c[2])return;setS(p=>({...p,club
 function spend(i){setS(p=>({...p,money:Math.max(0,p.money-100),relationship:i===0?clamp(p.relationship+8):p.relationship,morale:clamp(p.morale+4),history:[...p.history,"Spent time with "+people[i][0]+"."].slice(-20)}))}
 function action(k){setS(p=>k==="rest"?{...p,fitness:clamp(p.fitness+18),morale:clamp(p.morale+5),day:p.day+1}:k==="train"?{...p,fitness:clamp(p.fitness-15),skill:clamp(p.skill+4),day:p.day+1}:{...p,money:Math.max(0,p.money-150),morale:clamp(p.morale+12),fitness:clamp(p.fitness-8),day:p.day+1})}
 function home(name,cost){if(s.money<cost||s.items.includes(name))return;setS(p=>({...p,money:p.money-cost,items:[...p.items,name],morale:clamp(p.morale+8),history:[...p.history,"Moved into a "+name+"."].slice(-20)}))}
-function reset(){if(confirm("Start a new career?")){setS({...initial});setTab("career")}}
+function reset(){if(confirm("Start a new career?")){localStorage.removeItem("footballCareer");setCreated(false);setS({...initial});setTab("career")}}
 const nav=[["career","Career"],["life","Life"],["relationships","Relationships"],["shop","Shop"],["clubs","Clubs"],["profile","Profile"]];
 return <div className="app"><header><div className="brand">FOOTBALL <span>CAREER</span></div><button onClick={reset}>New career</button></header>
 <section className="dashboard"><div className="card player"><div className="ovr">{s.ovr}<small>OVR</small></div><div><h1>{s.name}</h1><p>{s.club} · {s.position} · {s.foot}</p><div className="chips"><span>AGE {s.age}</span><span>{s.weekly?"PRO CONTRACT":"ACADEMY"}</span></div></div></div>
